@@ -1,55 +1,103 @@
-9
-7 13 8
-S***N*M
+34
 
-10 42 68
-**SSS*NM**
+5 1 100000
+*****
 
-20 71 30
-***S*S*M**N*********
+5 1 100000
+M****
 
-10 34 54
-*****M****
+5 1 100000
+MMMMM
 
-17 89 223
-S**N*N*MMN*N*S***
+5 1 100000
+****M
 
-12 543 234
-NMNMMNNMMNNM
+5 1 100000
+M*M*M
 
+5 1 100000
+**M**
 
-7 1 1
-*******
+5 1 100000
+M***M
 
-7 13 8
-S***N*M
+5 100000 1
+*****
 
-10 42 68
-**SSS*NM**
+5 100000 1
+M****
 
-20 71 30
-***S*S*M**N*********
+5 100000 1
+MMMMM
 
-30 49 84
-S**M*SSSS*NNN*N***NN**M*NNN**S
+5 100000 1
+****M
 
-50 186 239
-*********MM**MM**S**S**S***SS*****S*M******N*S***N
+5 100000 1
+M*M*M
 
-100 186 239
-*********MM**MM**S**S**S***SS*****S*M******N*S***N*********MM**MM**S**S**S***SS*****S*M******N*S***N
+5 100000 1
+**M**
 
-100 70 15
-MSS*R*RMM*SMSRRMRR*RRRRM*MMM*RMSSM**M*SRRSRR*MRSRSMSRMSRS*SRS*S***MRSRM**MSS**RS*R*SRSM***SRRRRSRMRM
+5 100000 1
+M***M
 
-100 1 1
-S*****N****M****S****N****M****S****N****M****S****N****M****S****N****M****S****N****M****S****N**M
+100 1 100000
+****************************************************************************************************
 
-50 1 1
-S*****N****M****S****N****M****S****N****M****S***
+100 1 100000
+MMMMMMMMMM******************************************************************************************
 
-69 7 1
-NNNNNNNSSSSSSSSSSSSSS*******MMMMMMMNNNNSSSSSSSSMMMMMMM***************
+100 1 100000
+******************************************************************************************MMMMMMMMMM
 
-73 58446 35550
-******NNNN****NN****MM**SS****NN********NN****SSSS****NN**SS**MM*********
+100 1 100000
+MMMMMMMMMM************************************MMMMMMMMMM**********************************MMMMMMMMMM
+
+100 1 100000
+**********************************************MMMMMMMMMM********************************************
+
+100 1 100000
+MMMMMMMMMM********************************************************************************MMMMMMMMMM
+
+100 1 100000
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+
+100 100000 1
+****************************************************************************************************
+
+100 100000 1
+MMMMMMMMMM******************************************************************************************
+
+100 100000 1
+******************************************************************************************MMMMMMMMMM
+
+100 100000 1
+MMMMMMMMMM************************************MMMMMMMMMM**********************************MMMMMMMMMM
+
+100 100000 1
+**********************************************MMMMMMMMMM********************************************
+
+100 100000 1
+MMMMMMMMMM********************************************************************************MMMMMMMMMM
+
+100 100000 1
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+
+5 100 100
+MNMNS
+
+100 100 100
+MNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNS
+
+5 1 100000
+MNMNS
+
+100 1 100000
+MNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNS
+
+5 100000 1
+MNMNS
+
+100 100000 1
+MNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNS

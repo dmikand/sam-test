@@ -270,19 +270,34 @@ int GetArguments(char* wrPattern, int* wrPatternSize,
 	return err;
 }
 
-int GetCost(char* pattern, int pSize, int pCost, int oCost)
+typedef struct Node_s {
+	struct Node_s* parent;
+	struct Node_s* child;
+	int child_cnt;
+	char* p;
+	int idx;
+	int min_cost;
+} Node;
+
+int GetCost(char* pattern, int pattern_sz, int prod_cost, int wr_cost)
 {
-	int wrMax = 1;
-	int wr = wrMax;
+	int wr_sz_max = 1;
+	int wr_size = wr_sz_max;
 	int cost[PATTERN_MAX + 1] = {0};
-	char bckPattern[PATTERN_MAX + 1] = {0};
+	int cost_min = wr_sz_max*prod_cost + (pattern_sz - wr_sz_max + 1)*wr_cost;
+	Node node_list* = NULL;
 
-	memcpy(bckPattern, pattern, pSize);
+	wr_sz_max = GetMaxWriteSize(pattern, pattern_sz);
 
-	wrMax = GetMaxWriteSize(pattern, pSize);
-
-	for (wr = wrMax; wr >= 1; wr--) {
+	for (wr_size = wr_sz_max; wr_size >= 1; wr_size--) {
 		//printf("wr = %d\n", wr);
+		cost_min = wr_size*wr_cost + (pattern_sz - wr_size + 1)*wr_cost;
+		p = wr;
+		node_list = BuildGraph(pattern, pattern_sz, wr_size);
+		prevState = PatternEval(pattern, wr, 0, 0);
+		while (p < pSize) {
+			c
+		}
 		cost[wrMax - wr] = GetMinCost(pattern, pSize, INIT, wr);
 		memcpy(pattern, bckPattern, pSize);
 	}
