@@ -72,7 +72,7 @@ int PatternEval(char* pattern, int wr, int prevState, int pNum)
 	return state ? state : 'S';
 }
 
-int GetMinCost(char* pattern, int size, int prevState, int wr)
+int GetMinCost(char* pattern, int pattern_sz, int prev_state, int wr_size, int step)
 {
 	int cost = 1;
 	int min = -2;
@@ -89,35 +89,58 @@ int GetMinCost(char* pattern, int size, int prevState, int wr)
 	if (size < 1)
 		return 0;
 
-	newPattern = pattern;
 	//printf("pattern \"%s\"\n", pattern);
 
 	if (prevState == INIT) {
-		state = PatternEval(newPattern, wr, 0, 0);
-		cost = GetMinCost(pattern + wr, size - wr, state, wr);
+		state = PatternEval(pattern, wr_size, 0, 0);
+		for (int i = 0; i < wr_size; i++) {
+			if (node_list[i] > step) {
+				node_lit[i] = step + 1;
+			}
+		}
+
+		cost = GetMinCost(pattern + wr, pattern_sz - wr_size, state, wr_size);
 		if (cost < 0)
 			return -1;
 		//printf("%s: %c - %d\n", __FUNCTION__, *(newPattern + wr), cost);
 		return cost + 1;
 	}
 
-	for (lap = 0; lap <= overLap; lap++) {
-		/* can be optimized */
-		state = PatternEval(pattern, wr, prevState, lap);
-		if (state == FAIL) {
-			continue;
-		}
-		newSize = size + lap;
-		cost = GetMinCost(pattern + wr - lap, newSize - wr, state, wr);
-		if (cost >= 0) {
-			if (min == -2) {
-				min = cost;
+	state = PatternEval(data, wr_size, 0, 0);
+	node_lit[0] = cost;
+
+	for (data_idx = wr_size; data_idx < data_sz; data_idx += wr_size) {
+		tmp_cost = cost;
+		/* try to write all variants with current data portion of write head size */
+		for (lap = 0; lap <= overLap; lap++) {
+			wr_idx = data_idx - lap;
+#define KEY_LIST_LEN 3
+			int wr_cell = 0;
+			/* try to write full write head by write cells */
+			for (key_id = 0; key_id < KEY_LIST_LEN; key_id++) {
+				for (wr_cell = 0; wr_cell < wr_size; wr_cell++) {
+					if ( wr_cell <= lap ) {
+						if (data[wr_cell + wr_idx] != prev_state) {
+							break;
+						}
+					} else {
+						;
+					}
+				}
 			}
-			if (cost < min) {
-				min = cost;
+			if (state == FAIL) {
+				continue;
+			}
+
+			tmp_cost++;
+			if (node_list[data_idx - lap].cost < cost + 1) {
+				node_list[data_idx - lap].cost = cost + 1;
+			} else {
+				continue;
 			}
 		}
 	}
+
 
 	min++;
 	//printf("%s: %c - %d\n", __FUNCTION__, *(newPattern + wr), cost);
@@ -270,14 +293,39 @@ int GetArguments(char* wrPattern, int* wrPatternSize,
 	return err;
 }
 
-typedef struct Node_s {
-	struct Node_s* parent;
-	struct Node_s* child;
-	int child_cnt;
+typedef struct node_s {
 	char* p;
 	int idx;
 	int min_cost;
-} Node;
+} node_t;
+
+void build_graph(char* pattern, int pattern_sz, node_t node_list[], int wr_size)
+{
+	int node = 0;
+	int state = 0;
+	int cur = 0;
+
+	for (node = 0; node < pattern_sz; node++) {
+		if (node + 1 <= pNum) {
+			cur = prevState;
+		} else {
+			cur = pattern[node];
+		}
+		if (cur == '*')
+			continue;
+		if (state == 0) {
+			state = cur;
+			continue;
+		}
+		if (state != cur) {
+			return FAIL;
+		}
+	}
+
+	//printf("pattern: %s state: %c\n", pattern, state ? state : 'S');
+
+	return state ? state : 'S';
+}
 
 int GetCost(char* pattern, int pattern_sz, int prod_cost, int wr_cost)
 {
@@ -286,6 +334,7 @@ int GetCost(char* pattern, int pattern_sz, int prod_cost, int wr_cost)
 	int cost[PATTERN_MAX + 1] = {0};
 	int cost_min = wr_sz_max*prod_cost + (pattern_sz - wr_sz_max + 1)*wr_cost;
 	Node node_list* = NULL;
+	Node* node      = NULL;
 
 	wr_sz_max = GetMaxWriteSize(pattern, pattern_sz);
 
@@ -293,10 +342,9 @@ int GetCost(char* pattern, int pattern_sz, int prod_cost, int wr_cost)
 		//printf("wr = %d\n", wr);
 		cost_min = wr_size*wr_cost + (pattern_sz - wr_size + 1)*wr_cost;
 		p = wr;
-		node_list = BuildGraph(pattern, pattern_sz, wr_size);
 		prevState = PatternEval(pattern, wr, 0, 0);
-		while (p < pSize) {
-			c
+		for (child_cnt = 0; child_cnt < node->child_cnt; child_cnt++) {
+			Node* child = 
 		}
 		cost[wrMax - wr] = GetMinCost(pattern, pSize, INIT, wr);
 		memcpy(pattern, bckPattern, pSize);
