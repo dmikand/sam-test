@@ -1,0 +1,103 @@
+34
+
+5 1 100000
+*****
+
+5 1 100000
+M****
+
+5 1 100000
+MMMMM
+
+5 1 100000
+****M
+
+5 1 100000
+M*M*M
+
+5 1 100000
+**M**
+
+5 1 100000
+M***M
+
+5 100000 1
+*****
+
+5 100000 1
+M****
+
+5 100000 1
+MMMMM
+
+5 100000 1
+****M
+
+5 100000 1
+M*M*M
+
+5 100000 1
+**M**
+
+5 100000 1
+M***M
+
+100 1 100000
+****************************************************************************************************
+
+100 1 100000
+MMMMMMMMMM******************************************************************************************
+
+100 1 100000
+******************************************************************************************MMMMMMMMMM
+
+100 1 100000
+MMMMMMMMMM************************************MMMMMMMMMM**********************************MMMMMMMMMM
+
+100 1 100000
+**********************************************MMMMMMMMMM********************************************
+
+100 1 100000
+MMMMMMMMMM********************************************************************************MMMMMMMMMM
+
+100 1 100000
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+
+100 100000 1
+****************************************************************************************************
+
+100 100000 1
+MMMMMMMMMM******************************************************************************************
+
+100 100000 1
+******************************************************************************************MMMMMMMMMM
+
+100 100000 1
+MMMMMMMMMM************************************MMMMMMMMMM**********************************MMMMMMMMMM
+
+100 100000 1
+**********************************************MMMMMMMMMM********************************************
+
+100 100000 1
+MMMMMMMMMM********************************************************************************MMMMMMMMMM
+
+100 100000 1
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+
+5 100 100
+MNMNS
+
+100 100 100
+MNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNS
+
+5 1 100000
+MNMNS
+
+100 1 100000
+MNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNS
+
+5 100000 1
+MNMNS
+
+100 100000 1
+MNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNSMNMNS
