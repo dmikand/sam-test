@@ -124,8 +124,36 @@ int get_arguments()
 	return 0;
 }
 
+int do_test(struct ctx_test_case* test)
+{
+	int target;
+	int found = 0;
+	for (target = test->weight_a; target <= test->weight_b; target++) {
+		int weight_num;
+		for (weight_left = 0; weight_left <
+		for (weight_num = 0; weght_num < test->weight_num; weight_num++) {
+			if (target == test->weights[weight_num]) {
+				found = 1;;
+				break;
+			}
+		}
+	}
+}
+
 int main()
 {
+	int err = 0;
+	int test_cnt;
+
+	err = get_arguments();
+	if (err) {
+		return err;
+	}
+
+	for (test_cnt = 0; test_cnt < g_test.number; test_cnt++) {
+		err = do_test(&g_test.cases[test_cnt]);
+	}
+
 	return 0;
 }
 
