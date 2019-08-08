@@ -130,8 +130,15 @@ int do_test(struct ctx_test_case* test)
 	int found = 0;
 	for (target = test->weight_a; target <= test->weight_b; target++) {
 		int weight_num;
-		for (weight_left = 0; weight_left <
-		for (weight_num = 0; weght_num < test->weight_num; weight_num++) {
+		int left_weights[WEIGHT_NUM_MAX];
+		for (weight_num = 1; weght_num < test->weight_num; weight_num++) {
+			left_weights[weight_num - 1] = test->weights[weight_num - 1];
+			for (lvl = 0; lvl <= weight_num; lvl++) {
+
+				for (i = 0; i <= weight_num - 1; i++) {
+					left_sum += 
+				}
+			}
 			if (target == test->weights[weight_num]) {
 				found = 1;;
 				break;
