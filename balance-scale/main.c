@@ -124,24 +124,121 @@ int get_arguments()
 	return 0;
 }
 
+int combinations_number(int n)
+{
+	int i, j, k;
+	int n_fact = 1;
+	int k_fact = 1;
+	int nk_fact = 0;
+	int res = 0;
+
+	for  (i = 1; i <= n; i++) {
+		n_fact *= i;
+	}
+
+	nk_fact = n_fact;
+	for (k = 1; k < n; k++) {
+		k_fact *= k;
+		nk_fact /= (n - k);
+		res += n_fact / (k_fact * nk_fact);
+	}
+
+	return res;
+}
+
 int do_test(struct ctx_test_case* test)
 {
 	int target;
 	int found = 0;
-	for (target = test->weight_a; target <= test->weight_b; target++) {
-		int weight_num;
-		int left_weights[WEIGHT_NUM_MAX];
-		for (weight_num = 1; weght_num < test->weight_num; weight_num++) {
-			left_weights[weight_num - 1] = test->weights[weight_num - 1];
-			for (lvl = 0; lvl <= weight_num; lvl++) {
+	int* tbl = NULL;
+	int  tbl_size = 0;
+	int left_idx;
+	int weight_num;
+	int next_weight;
 
-				for (i = 0; i <= weight_num - 1; i++) {
-					left_sum += 
-				}
-			}
+	tbl_size = combinations_number(test->weight_num);
+	tbl = malloc(tbl_size * sizeof(int));
+
+	if (tbl == NULL) {
+		printf("failed to allocate %d units for table", tbl_size);
+		return -1;
+	}
+
+	memset(tbl, sizeof(int) * tbl_size, -1);
+
+	int lvl = 0;
+
+	for (target = test->weight_a; target <= test->weight_b; target++) {
+		for (weight_num = 0; weight_num < test->weight_num; weight_num++) {
 			if (target == test->weights[weight_num]) {
 				found = 1;;
+				printf ("weight is found, left %d, right %d\n", 0, target);
 				break;
+			}
+		}
+
+		if (found) {
+			break;
+		}
+
+		for (left_idx = 0; left_idx < test->weight_num; left_idx++) {
+			for (weight_num = left_idx + 1;
+				 weght_num < test->weight_num; weight_num++) 
+			{
+				if (target == test->weights[weight_num]) {
+					found = 1;;
+					break;
+				}
+			}
+		}
+
+		for (lvl = 0; lvl < test->weight_num - 1; lvl++) {
+			for (weight_num = 0; weight_num < test->weight_num; weight_num++) {
+				for (next_weight = weight_num + 1;
+					next_weight < test->weight_num; next_weight++ )
+				{
+					int* unit = NULL;
+					unit = &tbl[weight_num][lvl][next_weight - weight_num - 1];
+					if (*unit != -1) {
+						continue;
+					}
+					unit* = test->weights[weight_num] + test->weights[next_weight];
+					
+					if (target == test->weights[weight_num]) {
+						found = 1;;
+						printf ("weight is found, left %d, right %d\n", 0, target);
+						break;
+					}
+				}
+
+			}
+
+			if (found) {
+				break;
+			}
+
+			for (left_idx = 0; left_idx < test->weight_num; left_idx++) {
+				for (weight_num = left_idx + 1;
+					 weght_num < test->weight_num; weight_num++) 
+				{
+					if (target == test->weights[weight_num]) {
+						found = 1;;
+						break;
+					}
+				}
+			}
+
+			for (weight_num = 1; weght_num < test->weight_num; weight_num++) {
+				left_weights[weight_num - 1] = test->weights[weight_num - 1];
+				for (lvl = 0; lvl <= weight_num; lvl++) {
+					for (i = 0; i <= weight_num - 1; i++) {
+						left_sum += 
+					}
+				}
+				if (target == test->weights[weight_num]) {
+					found = 1;;
+					break;
+				}
 			}
 		}
 	}
