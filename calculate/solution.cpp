@@ -18,7 +18,7 @@ struct clause_s {
 };
 
 struct value_s {
-	int is_calc;
+	int calculated;
 	int val;
 	int cnt;      /* clauses count */
 	struct clause_s exp[CLAUSE_MAX];
@@ -135,44 +135,69 @@ int to_parse(struct cell_s* cell, char equation[LENGTH])
 
 #define PUSH(_cell, _idx)                                       \
 {                                                               \
-	stack_ptr < stack ? (printf("Stack overflow\n"), exit 1) :; \
-	stack_ptr->cell = (_cell),                                  \
-	stack_ptr->idx =  (_idx)                                    \
+	if(stack_ptr < stack) {printf("Stack overflow\n"); exit(1);}\
+	stack_ptr->cell = (_cell);                                  \
+	stack_ptr->idx =  (_idx);                                   \
 }
 
-#define POP(_idx)                              \
+#define POP(_cell, _idx)                       \
 (                                              \
 	++stack_ptr,                               \
 	(_cell) = stack_ptr->cell,                 \
 	(_idx) = stack_ptr->idx,                   \
-	stack_ptr > &stack[ROWS*COLS - 1] ? 1 : 0; \
+	stack_ptr > &stack[ROWS*COLS - 1] ? 1 : 0  \
 )
 
-int compute_cell(int idx)
+#define UNDETERMINED 1
+
+static inline int calculate_cell(int idx)
 {
-	int ret = 0;
-	int i = 0;
-	struct cell_s* cell = NULL;
-	struct s_entry stack[ROWS*COLS] = {0};
-	struct s_entry* stack_ptr = &stack[ROWS*COLS - 1];
-	int is_visited[ROWS*COLS] = {0};
+	struct clause_s* exp    = NULL;
+	struct cell_s*   cell   = NULL;
+	int              result = 0;
+	int              i      = 0;
 
-	cell = table[idx];
-	cell->is_visited = 1;
+	cell = &table[idx];
+	for (i = 0; i < cell->value.cnt; i++) {
+		exp = &cell->value.exp[i];
+		if (!exp->type) {
+			result += exp->sign ? exp->idx : -(exp->idx);
+			continue;
+		}
 
-	if (!undetermined_table[idx]) {
-		if (cell->value.is_calc) {
-			return cell->value.val;
+		if (undetermined_table[exp->idx]) {
+			return 0;
+		}
+
+		if (!table[exp->idx].value.calculated) {
+			result += calculate_cell(exp->idx);
+		} else {
+			result += table[exp->idx].value.val;
 		}
 	}
 
-	struct cell_s* cell_prev = NULL;
-	cell_prev = cell;
+	return result;
+}
 
-	struct cell_s* c = NULL;
+int compute_cell(int idx)
+{
+	struct clause_s* exp                      = NULL;
+	struct s_entry   stack[ROWS*COLS]         = {0};
+	struct s_entry*  stack_ptr                = &stack[ROWS*COLS - 1];
+	struct s_entry   u                        = {0};
+	struct cell_s*   cell                     = NULL;
+	struct cell_s*   c                        = NULL;
+	int              is_visited[2][ROWS*COLS] = {0};
+	int              is_undetermined          = 0;
+	int              link_id                  = 0;
+	int              ret                      = 0;
+	int              i                        = 0;
+
+	cell             = &table[idx];
+	cell->is_visited = 1;
+
 	PUSH(cell, 1);
 	/* check for undetermined */
-	int link_id;
 	while (POP(c, link_id)) {
 		for (link_id; link_id < ROWS*COLS; link_id++) {
 			if (!c->link_table[link_id]) {
@@ -180,43 +205,74 @@ int compute_cell(int idx)
 			}
 
 			/* check for circle */
-			if (is_visited[link_id]) {
+			if (is_undetermined) {
+				if (is_visited[UNDETERMINED][link_id]) {
+					continue;
+				}
+
+				PUSH(c, link_id + 1);
+				/* level up */
+				is_visited[UNDETERMINED][link_id] = 1;
+				c = &table[link_id];
+				undetermined_table[link_id] = 1;
+				link_id = 1;
+				continue;
+			}
+
+			if (is_visited[0][link_id]) {
 				is_undetermined = 1;
 				undetermined_table[link_id] = 1;
+				u.cell = c;
+				u.idx  = link_id;
 				break;
 			}
-			PUSH(c, link_id + 1);
 
-			is_visited[link_id] = 1;
-		}
-	}
+			PUSH(c, link_id + 1);
+			/* level up */
+			is_visited[0][link_id] = 1;
+			c = &table[link_id];
+			undetermined_table[link_id] = 0;
+			link_id = 1;
+		} /* for (link_id; link_id < ROWS*COLS; link_id++) */
 
 		if (is_undetermined) {
-			while (POP(link_id) != -1) {
-				;
+			if (u.cell == c) {
+				undetermined_table[u.idx] = 1;
+				is_undetermined = 0;
+				memset(&is_visited[UNDETERMINED][0], 0, ROWS*COLS);
+				u.cell = &table[0];
+				u.idx = 0;
 			}
 		}
-	for (i = 0; i < cell->value.cnt; i++) {
-		if (!cell->value.exp[i].type) {
-			continue;
-		}
+	} /* while (POP(c, link_id)) */
 
-		int cmp_idx = cell->value.exp[i].idx;
-
+	if (undetermined_table[idx]) {
+		return 1;
 	}
+
+	if (table[idx].value.calculated) {
+		return 0;
+	}
+
+	cell->value.val = calculate_cell(exp->idx);
+	cell->value.calculated = 1;
+
+	return 0;
 }
+
 void initTable()
 {
 	memset(table, 0, sizeof(*table)*ROWS*COLS);
 	return;
 }
 
-bool updateCell(int row, int col, char equation[LENGTH], int value[HEIGHT][WIDTH])
+bool updateCell(int row, int col, char equation[LENGTH], int ret_val[HEIGHT][WIDTH])
 {
-	struct value_s value_prev;
 	struct value_s* value = NULL;
-	int idx = 0;
-	bool ret = false;
+	struct value_s  value_prev;
+	bool            ret   = false;
+	int             idx   = 0;
+	int             i,j,link_cnt;
 
 	row++;
 	idx = to_index(row, col);
@@ -228,7 +284,6 @@ bool updateCell(int row, int col, char equation[LENGTH], int value[HEIGHT][WIDTH
 	ret = to_parse(&table[idx], equation);
 
 	/* get link to delete */
-	int i,j,link_cnt;
 	link_cnt = 0;
 
 	for (j = 0; j < value_prev.cnt; j++) {
@@ -263,9 +318,17 @@ bool updateCell(int row, int col, char equation[LENGTH], int value[HEIGHT][WIDTH
 			continue;
 		}
 		table[c_idx].link_table[idx] = 0;
+	}
+
+	for (j = 0; j < value_prev.cnt; j++) {
+		int c_idx = value_prev.exp[j].idx;
+		if (c_idx == 0) {
+			continue;
+		}
 		compute_cell(c_idx);
 	}
 
-
+	ret = compute_cell(idx);
 	return ret;
 }
+
