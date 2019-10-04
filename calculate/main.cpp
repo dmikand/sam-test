@@ -49,11 +49,13 @@ int main(){
 		int cmd = main_init();
 		int score = 0;
 		
+		printf("#%d\n", tc);
 		for(int i = 0; i < cmd; ++i){
 			scanf("%d %d %s %d", &row, &col, input, &checksumIn);
 			if(checksumIn < 0) checksumIn += THRESHOLD;
 			bool ret = updateCell(row, col, input, value);
 			int checksum = calcChecksum(value, ret);
+			printf("####%d %d\n", checksum, checksumIn);
 			if(checksumIn == checksum) ++score;
 		}	
 		printf("#%d %d\n", tc, score);
