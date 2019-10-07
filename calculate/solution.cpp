@@ -159,16 +159,16 @@ static inline int calculate_cell(int idx)
 	int              i      = 0;
 
 	cell = &table[idx];
+	printf("calculate cell %d, value count %d\n", idx, cell->value.cnt);
 	for (i = 0; i < cell->value.cnt; i++) {
 		exp = &cell->value.exp[i];
-
-		if (undetermined_table[exp->idx]) {
-			return 0;
-		}
 
 		if (!exp->type) {
 			value = exp->idx;
 		} else {
+			if (undetermined_table[exp->idx]) {
+				return 0;
+			}
 
 			if (!table[exp->idx].value.calculated) {
 				value = calculate_cell(exp->idx);
@@ -177,6 +177,9 @@ static inline int calculate_cell(int idx)
 				value = table[exp->idx].value.val;
 			}
 		}
+		printf("calculate cell %d, value %d\n", idx, value);
+
+		value %= 1000007;
 
 		result += exp->sign ? -(value) : value;
 	}
@@ -227,6 +230,7 @@ int compute_cell(int idx)
 				is_visited[UNDETERMINED][link_id] = 1;
 				c = &table[link_id];
 				undetermined_table[link_id] = 1;
+				c->value.calculated = 0;
 				link_id = 0;
 				continue;
 			}
@@ -251,6 +255,7 @@ int compute_cell(int idx)
 		if (is_undetermined) {
 			if (u.cell == c) {
 				undetermined_table[u.idx] = 1;
+				c->value.calculated = 0;
 				is_undetermined = 0;
 				memset(&is_visited[UNDETERMINED][0], 0, ROWS*COLS);
 				u.cell = NULL;
@@ -356,6 +361,7 @@ bool updateCell(int row, int col, char equation[LENGTH], int ret_val[HEIGHT][WID
 		}
 	}
 
-	return !!undetermined;
+	printf("cell %d undetermination is %d\n", idx, undetermined);
+	return !undetermined;
 }
 
