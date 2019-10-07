@@ -152,11 +152,12 @@ static inline int to_parse(struct cell_s* cell, char equation[LENGTH])
 
 static inline int calculate_cell(int idx)
 {
-	struct clause_s* exp    = NULL;
-	struct cell_s*   cell   = NULL;
-	int              result = 0;
-	int              value  = 0;
-	int              i      = 0;
+	struct clause_s* exp             = NULL;
+	struct cell_s*   cell            = NULL;
+	int              is_undetermined = 0;
+	int              result          = 0;
+	int              value           = 0;
+	int              i               = 0;
 
 	cell = &table[idx];
 	printf("calculate cell %d, value count %d\n", idx, cell->value.cnt);
@@ -167,7 +168,10 @@ static inline int calculate_cell(int idx)
 			value = exp->idx;
 		} else {
 			if (undetermined_table[exp->idx]) {
-				return 0;
+				printf("calculate cell %d, undetermind idx %d\n", idx,
+				       exp->idx);
+				is_undetermined = 1;
+				continue;
 			}
 
 			if (!table[exp->idx].value.calculated) {
@@ -184,10 +188,14 @@ static inline int calculate_cell(int idx)
 		result += exp->sign ? -(value) : value;
 	}
 
+	if (is_undetermined) {
+		printf("calculated cell %d: is undetermined\n", idx);
+		return 0;
+	}
+
 	cell->value.val = result;
 	printf("calculated cell %d: %d\n", idx, result);
 	cell->value.calculated = 1;
-
 
 	return result;
 }
@@ -337,14 +345,22 @@ bool updateCell(int row, int col, char equation[LENGTH], int ret_val[HEIGHT][WID
 		table[value->exp[i].idx].link_table[idx] = 1;
 	}
 
+	for (i = 0; i < value->cnt; i++) {
+		if (value->exp[i].type == 0) {
+			continue;
+		}
+
+		ret = compute_cell(value->exp[i].idx);
+	}
+
+	ret = compute_cell(idx);
+
 	/* compute deleted links */
 	for (i = 0; i < link_cnt; i++) {
 		if (del_links[i] != idx) {
 			compute_cell(del_links[i]);
 		}
 	}
-
-	ret = compute_cell(idx);
 
 	for (i = 0; i < ROWS*COLS; i++) {
 		if (undetermined_table[i]) {
