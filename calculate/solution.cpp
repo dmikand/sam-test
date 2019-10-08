@@ -168,9 +168,10 @@ static inline int calculate_cell(int idx)
 			value = exp->idx;
 		} else {
 			if (undetermined_table[exp->idx]) {
-				printf("calculate cell %d, undetermind idx %d\n", idx,
+				printf("calculate cell %d, undetermined idx %d\n", idx,
 				       exp->idx);
 				is_undetermined = 1;
+				undetermined_table[idx] = 1;
 				continue;
 			}
 
@@ -288,6 +289,7 @@ int compute_cell(int idx)
 void initTable()
 {
 	memset(table, 0, sizeof(*table)*ROWS*COLS);
+	memset(undetermined_table, 0, sizeof(*undetermined_table)*ROWS*COLS);
 	return;
 }
 
@@ -345,6 +347,16 @@ bool updateCell(int row, int col, char equation[LENGTH], int ret_val[HEIGHT][WID
 		table[value->exp[i].idx].link_table[idx] = 1;
 	}
 
+	/* compute deleted links */
+	for (i = 0; i < link_cnt; i++) {
+		if (del_links[i] != idx) {
+			if (undetermined_table[del_links[i]]) {
+				compute_cell(del_links[i]);
+			}
+		}
+	}
+
+	/*
 	for (i = 0; i < value->cnt; i++) {
 		if (value->exp[i].type == 0) {
 			continue;
@@ -352,15 +364,9 @@ bool updateCell(int row, int col, char equation[LENGTH], int ret_val[HEIGHT][WID
 
 		ret = compute_cell(value->exp[i].idx);
 	}
+	*/
 
 	ret = compute_cell(idx);
-
-	/* compute deleted links */
-	for (i = 0; i < link_cnt; i++) {
-		if (del_links[i] != idx) {
-			compute_cell(del_links[i]);
-		}
-	}
 
 	for (i = 0; i < ROWS*COLS; i++) {
 		if (undetermined_table[i]) {
