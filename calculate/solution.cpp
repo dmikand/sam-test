@@ -219,10 +219,76 @@ int compute_cell(int idx)
 	cell->is_visited = 1;
 	is_visited[0][idx] = 1;
 
+	for (i = 0; i < cell->value.cnt; i++) {
+		exp = &cell->value.exp[i];
+
+		if (!exp->type) {
+			continue;
+		}
+
+		struct cell_s* visit_cell = &table[exp->idx];
+
+		PUSH(visit_cell, -1);
+
+		while (POP(visit_cell, c_idx)) {
+			is_visited[0][c_idx] = 1;
+			for (j = c_idx + 1; j < visit_cell->value.cnt; j++) {
+				struct clause_s* e = NULL;
+				e = &visit_cell->value.exp[j];
+
+				if (!e->type) {
+					continue;
+				}
+
+				/* check for circle */
+
+				if (is_visited[0][e->idx]) {
+					is_undetermined = 1;
+					is_visited[UNDETERMINED][link_id] = 1;
+					undetermined_table[link_id] = 1;
+					u.cell = &table[link_id];
+					u.idx  = link_id;
+					visit_cell = u.cell;
+					continue;
+				}
+
+				PUSH(visit_cell, e->idx);
+				/* level up */
+				is_visited[0][e->idx] = 1;
+				visit_cell = &table[e->idx];
+				undetermined_table[e->idx] = 0;
+				break;
+			} /* for (link_id; link_id < ROWS*COLS; link_id++) */
+
+		} /* while (POP(c, link_id)) */
+
+			printf("calculate cell %d, value %d\n", idx, value);
+
+	}
+
+	if (is_undetermined) {
+		printf("calculated cell %d: is undetermined\n", idx);
+		return 0;
+	}
+
+	cell->value.val = result;
+	printf("calculated cell %d: %d\n", idx, result);
+	cell->value.calculated = 1;
 	PUSH(cell, 0);
 	/* check for undetermined */
 	while (POP(c, c_idx)) {
 		link_id = c_idx;
+		if (is_undetermined) {
+			if (u.cell == c) {
+				undetermined_table[u.idx] = 1;
+				c->value.calculated = 0;
+				is_undetermined = 0;
+				memset(&is_visited[UNDETERMINED][0], 0, ROWS*COLS);
+				u.cell = NULL;
+				u.idx = 0;
+			}
+		}
+
 		for (link_id; link_id < ROWS*COLS; link_id++) {
 			if (!c->link_table[link_id]) {
 				continue;
@@ -246,9 +312,11 @@ int compute_cell(int idx)
 
 			if (is_visited[0][link_id]) {
 				is_undetermined = 1;
+				is_visited[UNDETERMINED][link_id] = 1;
 				undetermined_table[link_id] = 1;
-				u.cell = c;
-				u.idx  = c_idx;
+				u.cell = &table[link_id];
+				u.idx  = link_id;
+				c = u.cell;
 				link_id = 0;
 				continue;
 			}
@@ -261,16 +329,6 @@ int compute_cell(int idx)
 			link_id = 0;
 		} /* for (link_id; link_id < ROWS*COLS; link_id++) */
 
-		if (is_undetermined) {
-			if (u.cell == c) {
-				undetermined_table[u.idx] = 1;
-				c->value.calculated = 0;
-				is_undetermined = 0;
-				memset(&is_visited[UNDETERMINED][0], 0, ROWS*COLS);
-				u.cell = NULL;
-				u.idx = 0;
-			}
-		}
 	} /* while (POP(c, link_id)) */
 
 	if (undetermined_table[idx]) {
