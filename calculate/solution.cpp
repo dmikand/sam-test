@@ -208,16 +208,18 @@ int compute_cell(int idx)
 	struct s_entry   u                        = {0};
 	struct cell_s*   cell                     = NULL;
 	struct cell_s*   c                        = NULL;
-	int              is_visited[2][ROWS*COLS] = {0};
+	int              visited[ROWS*COLS]       = {0};
 	int              is_undetermined          = 0;
 	int              link_id                  = 0;
 	int              c_idx                    = 0;
 	int              ret                      = 0;
 	int              i                        = 0;
+	int              j                        = 0;
+	int              v_cnt                    = 0;
 
 	cell             = &table[idx];
 	cell->is_visited = 1;
-	is_visited[0][idx] = 1;
+	visited[v_cnt++] = idx;
 
 	for (i = 0; i < cell->value.cnt; i++) {
 		exp = &cell->value.exp[i];
@@ -231,7 +233,6 @@ int compute_cell(int idx)
 		PUSH(visit_cell, -1);
 
 		while (POP(visit_cell, c_idx)) {
-			is_visited[0][c_idx] = 1;
 			for (j = c_idx + 1; j < visit_cell->value.cnt; j++) {
 				struct clause_s* e = NULL;
 				e = &visit_cell->value.exp[j];
@@ -241,20 +242,13 @@ int compute_cell(int idx)
 				}
 
 				/* check for circle */
-
-				if (is_visited[0][e->idx]) {
-					is_undetermined = 1;
-					is_visited[UNDETERMINED][link_id] = 1;
-					undetermined_table[link_id] = 1;
-					u.cell = &table[link_id];
-					u.idx  = link_id;
-					visit_cell = u.cell;
-					continue;
+				if (visited[e->idx]) {
+					/* circle is found */
+					
 				}
-
 				PUSH(visit_cell, e->idx);
 				/* level up */
-				is_visited[0][e->idx] = 1;
+				visited[e->idx] = 0;
 				visit_cell = &table[e->idx];
 				undetermined_table[e->idx] = 0;
 				break;
